@@ -1,0 +1,9 @@
+# Railway/Nixpacks: Spring Boot Maven build (Java 11 per pom.xml)
+[variables]
+NIXPACKS_JDK_VERSION = "11"
+
+[phases.build]
+cmds = ["mvn -DskipTests clean package"]
+
+[start]
+cmd = "java -jar target/bfhl-0.0.1-SNAPSHOT.jar"
