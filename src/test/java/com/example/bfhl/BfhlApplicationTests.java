@@ -39,6 +39,7 @@ class BfhlApplicationTests {
                 .andExpect(jsonPath("$.odd_numbers", contains("1")))
                 .andExpect(jsonPath("$.alphabets", containsInAnyOrder("A", "R")))
                 .andExpect(jsonPath("$.special_characters", contains("$")))
+                .andExpect(jsonPath("$.sepcial_characters", contains("$")))
                 .andExpect(jsonPath("$.sum", is("339")))
                 .andExpect(jsonPath("$.concat_string", is("Ra")));
     }
