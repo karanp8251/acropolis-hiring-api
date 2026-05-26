@@ -159,7 +159,10 @@ async function executeApiRequest() {
         }, 300); // Small delay to feel active
     } else {
         // Real server request
-        const url = document.getElementById('backend-url').value;
+        let url = document.getElementById('backend-url').value;
+        if (url.startsWith('/')) {
+            url = window.location.origin + url;
+        }
         try {
             const response = await fetch(url, {
                 method: 'POST',
