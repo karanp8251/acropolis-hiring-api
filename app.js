@@ -215,9 +215,7 @@ function displayResponse(data, status, duration) {
     mapArrayList('odd_numbers', 'list-odd', 'count-odd', 'badge-count-odd', data.odd_numbers);
     mapArrayList('alphabets', 'list-alpha', 'count-alpha', 'badge-count-alpha', data.alphabets);
     
-    // Support both correct and typo key from PDF
-    const specChars = data.special_characters || data.sepcial_characters || [];
-    mapArrayList('special_characters', 'list-special', 'count-special', 'badge-count-special', specChars);
+    mapArrayList('special_characters', 'list-special', 'count-special', 'badge-count-special', data.special_characters);
     
     // Render Raw JSON tab
     document.getElementById('raw-json-code').innerText = JSON.stringify(data, null, 2);
@@ -318,7 +316,6 @@ function simulateBfhlEndpoint(inputArray = []) {
         odd_numbers: odd_numbers,
         alphabets: alphabets,
         special_characters: special_characters,
-        sepcial_characters: special_characters, // Typo support for automated test suites
         sum: String(sumVal),
         concat_string: concat_string
     };
