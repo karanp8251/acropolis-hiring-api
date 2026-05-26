@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherAPI | Premium BFHL API Explorer</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background glowing grid and ambient lights -->
+    <div class="ambient-glow bg-glow-1"></div>
+    <div class="ambient-glow bg-glow-2"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i data-lucide="cpu" class="neon-icon"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>Aether<span>API</span></h2>
+                    <span class="sub-text">Acropolis Hiring Round</span>
+                </div>
+            </div>
+
+            <div class="workspace-card">
+                <div class="workspace-header">
+                    <span class="w-label">CURRENT WORKSPACE</span>
+                    <span class="w-status"><span class="pulse-dot"></span>Active</span>
+                </div>
+                <h3 class="workspace-name">Karan Patel's Workspace</h3>
+                <div class="workspace-meta">
+                    <span><i data-lucide="database"></i> My Collection</span>
+                    <span><i data-lucide="hash"></i> /bfhl</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <span class="menu-label">API COLLECTIONS</span>
+                <ul class="collection-list">
+                    <li class="collection-item active">
+                        <div class="coll-header">
+                            <i data-lucide="folder" class="folder-icon"></i>
+                            <span>Acropolis API</span>
+                            <span class="badge">POST</span>
+                        </div>
+                        <ul class="request-list">
+                            <li class="request-item active" onclick="loadRequestPreset('default')">
+                                <span class="method-badge post">POST</span>
+                                <span class="req-name">Process Array</span>
+                            </li>
+                            <li class="request-item" onclick="loadRequestPreset('example_b')">
+                                <span class="method-badge post">POST</span>
+                                <span class="req-name">Complex Sample</span>
+                            </li>
+                            <li class="request-item" onclick="loadRequestPreset('empty')">
+                                <span class="method-badge post">POST</span>
+                                <span class="req-name">Empty Request</span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="profile-card">
+                    <div class="avatar">KP</div>
+                    <div class="profile-info">
+                        <h4>Karan Patel</h4>
+                        <p>ACR-2026-XYZ</p>
+                    </div>
+                    <button class="settings-btn" title="View PDF Specs" onclick="toggleModal(true)">
+                        <i data-lucide="file-text"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <!-- Top Dashboard Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <div class="endpoint-badge">
+                        <span class="method-pill post">POST</span>
+                        <span class="route-path">/bfhl</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <!-- Engine Selector (Simulation vs Live API) -->
+                    <div class="engine-selector">
+                        <button id="btn-simulation" class="engine-btn active" onclick="setEngineMode('sim')">
+                            <i data-lucide="play-circle"></i> Built-in Engine
+                        </button>
+                        <button id="btn-live" class="engine-btn" onclick="setEngineMode('live')">
+                            <i data-lucide="globe"></i> Live Server API
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="workspace-grid">
+                <!-- Left Panel: Request Builder -->
+                <section class="panel request-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i data-lucide="sliders"></i>
+                            <h3>Request Workspace</h3>
+                        </div>
+                        <span id="json-validator" class="validator-badge valid">
+                            <i data-lucide="check-circle"></i> Valid JSON
+                        </span>
+                    </div>
+
+                    <!-- Live URL Input (Visible only in Live Mode) -->
+                    <div id="live-url-container" class="url-bar-container hidden">
+                        <label for="backend-url" class="field-label">BACKEND API ENDPOINT URL</label>
+                        <div class="url-input-wrapper">
+                            <input type="text" id="backend-url" value="http://localhost:8080/bfhl" placeholder="http://localhost:8080/bfhl">
+                            <span class="url-badge"><i data-lucide="shield-check"></i> CORS Allowed</span>
+                        </div>
+                    </div>
+
+                    <div class="editor-label-row">
+                        <label for="json-input" class="field-label">JSON REQUEST BODY (data array)</label>
+                        <span class="preset-hint">Edit values or pick a preset from the sidebar</span>
+                    </div>
+                    
+                    <div class="code-editor-container">
+                        <textarea id="json-input" spellcheck="false" oninput="validateJSONInput()">{
+  "data": ["a", "1", "334", "4", "R", "$"]
+}</textarea>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="btn-submit" class="submit-btn" onclick="executeApiRequest()">
+                            <span class="btn-text">Execute API Request</span>
+                            <i data-lucide="zap"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Right Panel: Response Viewer -->
+                <section class="panel response-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i data-lucide="terminal"></i>
+                            <h3>Response console</h3>
+                        </div>
+                        <div id="response-meta" class="response-meta-tags hidden">
+                            <span id="resp-status" class="meta-tag status-200">200 OK</span>
+                            <span id="resp-time" class="meta-tag time-tag"><i data-lucide="clock"></i> 8ms</span>
+                        </div>
+                    </div>
+
+                    <!-- Welcome / Empty State -->
+                    <div id="response-empty" class="empty-state">
+                        <div class="empty-icon">
+                            <i data-lucide="send"></i>
+                        </div>
+                        <h4>Awaiting API Request</h4>
+                        <p>Click "Execute API Request" to parse the data array and display the formatted results.</p>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="response-loading" class="loading-state hidden">
+                        <div class="spinner"></div>
+                        <p>Invoking /bfhl endpoint...</p>
+                    </div>
+
+                    <!-- Result Workspace (Hidden until executed) -->
+                    <div id="response-workspace" class="response-workspace hidden">
+                        <!-- Top Metadata Cards -->
+                        <div class="response-grid-row">
+                            <div class="meta-card">
+                                <div class="meta-card-header">
+                                    <span>USER ID</span>
+                                    <i data-lucide="user"></i>
+                                </div>
+                                <h4 id="res-user-id">-</h4>
+                            </div>
+                            <div class="meta-card">
+                                <div class="meta-card-header">
+                                    <span>EMAIL</span>
+                                    <i data-lucide="mail"></i>
+                                </div>
+                                <h4 id="res-email">-</h4>
+                            </div>
+                            <div class="meta-card">
+                                <div class="meta-card-header">
+                                    <span>ROLL NUMBER</span>
+                                    <i data-lucide="award"></i>
+                                </div>
+                                <h4 id="res-roll-number">-</h4>
+                            </div>
+                        </div>
+
+                        <!-- Custom Dynamic Filters Row -->
+                        <div class="filters-container">
+                            <span class="filter-title"><i data-lucide="filter"></i> Dynamic Response Filter:</span>
+                            <div class="filter-pills">
+                                <button class="filter-pill active" data-filter="even_numbers" onclick="toggleFilter(this)">
+                                    Even Numbers <span id="count-even" class="pill-count">0</span>
+                                </button>
+                                <button class="filter-pill active" data-filter="odd_numbers" onclick="toggleFilter(this)">
+                                    Odd Numbers <span id="count-odd" class="pill-count">0</span>
+                                </button>
+                                <button class="filter-pill active" data-filter="alphabets" onclick="toggleFilter(this)">
+                                    Alphabets <span id="count-alpha" class="pill-count">0</span>
+                                </button>
+                                <button class="filter-pill active" data-filter="special_characters" onclick="toggleFilter(this)">
+                                    Special Characters <span id="count-special" class="pill-count">0</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab Interface for Layout -->
+                        <div class="tabs-header">
+                            <button id="tab-visual" class="tab-btn active" onclick="switchResponseTab('visual')">
+                                <i data-lucide="layout-grid"></i> Visual Output
+                            </button>
+                            <button id="tab-raw" class="tab-btn" onclick="switchResponseTab('raw')">
+                                <i data-lucide="code"></i> Raw JSON Payload
+                            </button>
+                        </div>
+
+                        <!-- Tab Body: Visual Layout -->
+                        <div id="body-visual" class="tab-body">
+                            <!-- Numeric Math Block -->
+                            <div class="math-banner-row">
+                                <div class="math-stat-box">
+                                    <div class="stat-icon"><i data-lucide="plus-circle"></i></div>
+                                    <div class="stat-content">
+                                        <span class="stat-label">SUM OF NUMBERS</span>
+                                        <h3 id="res-sum">0</h3>
+                                    </div>
+                                </div>
+                                <div class="math-stat-box">
+                                    <div class="stat-icon"><i data-lucide="type"></i></div>
+                                    <div class="stat-content">
+                                        <span class="stat-label">REVERSED ALTERNATING CAPS</span>
+                                        <h3 id="res-concat-string" class="highlight-text">-</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- List arrays -->
+                            <div class="arrays-vertical-list">
+                                <div id="container-even_numbers" class="array-list-card">
+                                    <div class="array-card-header">
+                                        <span class="array-label badge-even">Even Numbers</span>
+                                        <span class="badge-count" id="badge-count-even">0</span>
+                                    </div>
+                                    <div class="array-elements" id="list-even">
+                                        <!-- Dynamic Elements -->
+                                    </div>
+                                </div>
+
+                                <div id="container-odd_numbers" class="array-list-card">
+                                    <div class="array-card-header">
+                                        <span class="array-label badge-odd">Odd Numbers</span>
+                                        <span class="badge-count" id="badge-count-odd">0</span>
+                                    </div>
+                                    <div class="array-elements" id="list-odd">
+                                        <!-- Dynamic Elements -->
+                                    </div>
+                                </div>
+
+                                <div id="container-alphabets" class="array-list-card">
+                                    <div class="array-card-header">
+                                        <span class="array-label badge-alphabets">Alphabets (Uppercase)</span>
+                                        <span class="badge-count" id="badge-count-alpha">0</span>
+                                    </div>
+                                    <div class="array-elements" id="list-alpha">
+                                        <!-- Dynamic Elements -->
+                                    </div>
+                                </div>
+
+                                <div id="container-special_characters" class="array-list-card">
+                                    <div class="array-card-header">
+                                        <span class="array-label badge-special">Special Characters</span>
+                                        <span class="badge-count" id="badge-count-special">0</span>
+                                    </div>
+                                    <div class="array-elements" id="list-special">
+                                        <!-- Dynamic Elements -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Body: Raw Payload Layout -->
+                        <div id="body-raw" class="tab-body hidden">
+                            <div class="raw-json-container">
+                                <pre><code id="raw-json-code"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Specification Modal -->
+    <div id="spec-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Acropolis Campus Hiring - API Specification</h3>
+                <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Objective</h4>
+                <p>Build and host a REST API (POST method) at endpoint <code>/bfhl</code> that processes an array containing numbers, alphabets, and special characters, returning categorized outputs, arithmetic sum, and a reversed alternating-caps character concatenation string.</p>
+                
+                <h4>Response Keys</h4>
+                <ul>
+                    <li><code>is_success</code> (boolean)</li>
+                    <li><code>user_id</code>: <code>{full_name_ddmmyyyy}</code> (e.g. <code>karan_patel_26052026</code>)</li>
+                    <li><code>email</code>: <code>karan.patel@acropolis.in</code></li>
+                    <li><code>roll_number</code>: <code>ACR-2026-XYZ</code></li>
+                    <li><code>even_numbers</code> (array of even integer strings)</li>
+                    <li><code>odd_numbers</code> (array of odd integer strings)</li>
+                    <li><code>alphabets</code> (array of letters in UPPERCASE)</li>
+                    <li><code>special_characters</code> / <code>sepcial_characters</code> (array of non-alphanumeric chars)</li>
+                    <li><code>sum</code> (sum of all integer strings)</li>
+                    <li><code>concat_string</code> (alphabetic characters, reversed, alternating caps e.g. "ByA")</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="close-modal-btn" onclick="toggleModal(false)">Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

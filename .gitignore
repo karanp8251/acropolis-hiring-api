@@ -1,0 +1,23 @@
+# Maven target directories
+target/
+*.war
+*.sar
+*.ear
+*.har
+*.class
+*.jar
+
+# IDE configurations
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Local Maven environment provisioned by script
+apache-maven-3.9.6/
+
+# System files
+Thumbs.db
+.DS_Store
